@@ -1,33 +1,48 @@
 <script setup lang="ts">
-import { ref, computed, watch, defineProps, defineEmits } from 'vue'
+import { ref, computed, watch, defineProps, defineEmits, onUnmounted, onMounted } from 'vue'
 
 const emit = defineEmits(['select'])
 const props = defineProps({
-  date: {
-    type: String,
-    default: null
-  },
   locale: {
     type: String,
     default: 'ru'
   }
 })
 
+const isOpen = ref(false)
+const currentDate = ref(new Date())
 const selectedDate = ref()
 
-const currentDate = ref(new Date())
+const inputRef = ref<HTMLElement | null>(null)
+const calendarRef = ref<HTMLElement | null>(null)
 
-if (props.date) {
-  const [year, month, day] = props.date.split('-').map(Number)
-  currentDate.value = new Date(year, month - 1, day)
-  selectedDate.value = new Date(year, month - 1, day)
-} else {
-  const today = new Date()
-  selectedDate.value = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+const closeCalendar = (e: MouseEvent) => {
+  const target = e.target as Node
+
+  if ( inputRef.value?.contains(target) || calendarRef.value?.contains(target)) {
+    return
+  }
+  isOpen.value = false
 }
 
+onMounted(() => {
+  document.addEventListener('click', closeCalendar)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeCalendar)
+})
+
+const getFormattedDate = (date) => {
+  const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  return formattedDate
+}
+
+const today = new Date()
+selectedDate.value = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+
 const months: { [key: string]: any } = {
-  ru: [ 
+  ru: [
     'Январь',
     'Февраль',
     'Март',
@@ -59,21 +74,21 @@ const months: { [key: string]: any } = {
 
 const weekDays: { [key: string]: any } = {
   ru: [
-    'Пн', 
-    'Вт', 
-    'Ср', 
-    'Чт', 
-    'Пт', 
-    'Сб', 
+    'Пн',
+    'Вт',
+    'Ср',
+    'Чт',
+    'Пт',
+    'Сб',
     'Вс'
   ],
   en: [
-    'Mon', 
-    'Tue', 
-    'Wed', 
-    'Thu', 
-    'Fri', 
-    'Sat', 
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
     'Sun'
   ]
 }
@@ -133,24 +148,16 @@ const nextMonth = () => {
 const selectDay = (day) => {
   const clickedDate = new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate())
   selectedDate.value = clickedDate
+  emit('select', getFormattedDate(clickedDate))
 
-  const formattedDate = `${clickedDate.getFullYear()}-${String(clickedDate.getMonth() + 1).padStart(2, '0')}-${String(clickedDate.getDate()).padStart(2, '0')}`
-  emit('select', formattedDate)
 }
 
-watch(() => props.date, (newVal) => {
-  if (!newVal) {
-    return;
-  }
-  const [year, month, day] = newVal.split('-').map(Number)
-  const newDate = new Date(year, month - 1, day)
-  selectedDate.value = newDate
-  currentDate.value = new Date(year, month - 1, 1)
-})
+
 </script>
 
 <template>
-  <div class="calendar">
+  <input ref="inputRef" type="text" :value="getFormattedDate(selectedDate)" @click="isOpen = true">
+  <div class="calendar" ref="calendarRef" v-if="isOpen">
     <div class="calendar-header">
       <button @click="prevMonth" class="nav-btn">&#9668;</button>
       <h4>{{ currentMonthLabel }}</h4>
@@ -225,7 +232,7 @@ watch(() => props.date, (newVal) => {
 
     }
 
-    &.active:hover:not(.selected){
+    &.active:hover:not(.selected) {
       border: 1px solid #a3e1e9;
     }
 

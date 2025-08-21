@@ -19,7 +19,7 @@
 
 <style lang="scss" scoped>
 .select-control{
-  display: inline-block;
+  display: block;
   margin: 20px 0 0 0;
 }
 </style>

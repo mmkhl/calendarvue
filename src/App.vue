@@ -17,7 +17,6 @@ const langOptions: Option[] = [
 const selected = ref('')
 const onSelectDate = (date: string) => {
   selected.value = date
-  alert(`Выбранная дата: ${date}`)
 }
 const changeLang = (value: string) => {
   lang.value = value
@@ -25,7 +24,7 @@ const changeLang = (value: string) => {
 </script>
 
 <template>
-  <Calendar :locale="lang" @select="onSelectDate" />
   <SelectControl :lang="lang" :options="langOptions" @changeLang="changeLang" />
+  <Calendar :locale="lang" @select="onSelectDate" />
 </template>
 
