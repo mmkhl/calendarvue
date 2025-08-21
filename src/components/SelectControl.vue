@@ -1,32 +1,25 @@
 <script setup lang="ts">
   import { defineProps, defineEmits } from 'vue';
   const emit = defineEmits(['changeLang'])
-  const props = defineProps({
-    lang: {
-      type: String,
-      default: 'ru',
-    },
-    options: {
-      type: Array,
-      default: []
-    }
-  })
+  const props = defineProps(['options'])
 
 </script>
 
 <template>
-  <label>
+  <label class="select-control">
     Язык: 
-    <select @change="(event) => (emit('changeLang', event.target.value ))">
-      <template v-for="opt in options" :key="opt.value">
-        <option :value="opt.value">{{opt.description}}</option>
+    <select id="options-list" @change="(event) => emit('changeLang', event.target?.value )">
+      <template v-for="opt in props.options" :key="opt.value">
+        <option :value="opt?.value">{{opt?.description}}</option>
       </template>
     </select>
   </label>
 </template>
 
 
-
-<style scoped>
-
+<style lang="scss" scoped>
+.select-control{
+  display: inline-block;
+  margin: 20px 0 0 0;
+}
 </style>

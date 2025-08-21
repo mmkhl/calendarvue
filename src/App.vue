@@ -4,13 +4,18 @@ import { ref } from 'vue'
 import Calendar from './components/Calendar.vue'
 import SelectControl from './components/SelectControl.vue'
 
+interface Option {
+  value: string,
+  description: string
+}
+
 const lang = ref('ru')
-const langOptions = [
-  {value: 'ru', description: 'Русский'},
-  {value: 'en', description: 'Английский'},
+const langOptions: Option[] = [
+  { value: 'ru', description: 'Русский' },
+  { value: 'en', description: 'Английский' },
 ]
 const selected = ref('')
-const onSelectDate = (date) => {
+const onSelectDate = (date: string) => {
   selected.value = date
   alert(`Выбранная дата: ${date}`)
 }
@@ -19,20 +24,8 @@ const changeLang = (value: string) => {
 }
 </script>
 
-
 <template>
-  <div class="app">
-    <div style="margin-top: 20px;">
-      <SelectControl
-        :lang="lang"
-        :options="langOptions"
-        @changeLang="changeLang"
-
-      />
-    </div>
-    <Calendar 
-      :locale="lang" 
-      @select="onSelectDate" 
-    />
-  </div>
+  <Calendar :locale="lang" @select="onSelectDate" />
+  <SelectControl :lang="lang" :options="langOptions" @changeLang="changeLang" />
 </template>
+

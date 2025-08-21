@@ -13,7 +13,6 @@ const props = defineProps({
   }
 })
 
-
 const selectedDate = ref()
 
 const currentDate = ref(new Date())
@@ -57,8 +56,6 @@ const months: { [key: string]: any } = {
     'December'
   ]
 }
-
-
 
 const weekDays: { [key: string]: any } = {
   ru: [
